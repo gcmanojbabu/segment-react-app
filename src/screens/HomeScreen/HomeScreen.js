@@ -1,9 +1,10 @@
 import { AppBar, Autocomplete, Button, Dialog, DialogActions, DialogContent, Grid, Link, TextField, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import CircleIcon from '@mui/icons-material/Circle';
 import axios from 'axios';
 import { Box } from '@mui/system';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
+import './HomeScreen.css'
 
 export default function HomeScreen() {
   const [openPopup, setOpenPopup] = useState(false);
@@ -99,7 +100,7 @@ export default function HomeScreen() {
   return (
     <>
       <Box>
-        <AppBar position="static" style={{
+        <AppBar className='appBar' position="static" style={{
           backgroundColor: '#39AEBC',
           boxShadow: 'none',
           padding: '15px'
@@ -158,6 +159,7 @@ export default function HomeScreen() {
                       direction="row"
                       justifyContent="flex-end"
                       alignItems="center"
+                      sx={{ my: 2 }}
                     >
                       <CircleIcon color="success" sx={{ height: '15px', width: '15px' }} />
                       - User Traits
@@ -181,6 +183,7 @@ export default function HomeScreen() {
                           </Grid>
                           <Grid item xs={9}>
                             <Autocomplete
+                              sx={{ my: 2 }}
                               spacing={2}
                               disablePortal
                               id="combo-box"
@@ -192,10 +195,6 @@ export default function HomeScreen() {
                               renderInput={(params) => <TextField {...params} />}
                               onChange={(event, value) => onSegmentSchemaStateChange(event, value, index)}
                               value={element}
-                              style={{
-                                marginTop: '20px',
-                                marginBottom: '20px'
-                              }}
                             />
                           </Grid>
                           <Grid item xs={1}>
@@ -224,6 +223,7 @@ export default function HomeScreen() {
                       </Grid>
                       <Grid item xs={9}>
                         <Autocomplete
+                          sx={{ my: 2 }}
                           disablePortal
                           id="combo-box"
                           options={initialSchemaOptions}
@@ -238,10 +238,6 @@ export default function HomeScreen() {
                           />}
                           onChange={(event, value) => onSegmentSchemaChange(event, value)}
                           value={segmentValue}
-                          style={{
-                            marginTop: '20px',
-                            marginBottom: '20px'
-                          }}
                         />
                       </Grid>
                       <Grid item xs={1}>
