@@ -1,23 +1,32 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Icon, Link, TextField } from '@mui/material'
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Link, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CircleIcon from '@mui/icons-material/Circle';
-import { Stack, width } from '@mui/system';
+import axios from 'axios';
 
 export default function HomeScreen() {
   const [openPopup, setOpenPopup] = useState(false);
   const [segmentName, setSegmentName] = useState('')
   const [segmentValue, setSegmentValue] = useState('')
+  const [segmentValueError, setSegmentValueError] = useState(false)
   const [schemaList, setSchemaList] = useState([])
-
-  const schemaOptions = [
-    { label: 'First Name', value: 'first_name', isSelected: false },
-    { label: 'Last Name', value: 'last_name', isSelected: false },
-    { label: 'Gender', value: 'gender', isSelected: false },
-    { label: 'Age', value: 'age', isSelected: false },
-    { label: 'Account Name', value: 'account_name', isSelected: false },
-    { label: 'City', value: 'city', isSelected: false },
-    { label: 'State', value: 'state', isSelected: true },
+  const initialSchemaOptions = [
+    { label: 'First Name', value: 'first_name' },
+    { label: 'Last Name', value: 'last_name' },
+    { label: 'Gender', value: 'gender' },
+    { label: 'Age', value: 'age' },
+    { label: 'Account Name', value: 'account_name' },
+    { label: 'City', value: 'city' },
+    { label: 'State', value: 'state' },
   ]
+  const [schemaOptionsFlag, setSchemaOptionsFlag] = useState({
+    first_name: false,
+    last_name: false,
+    gender: false,
+    age: false,
+    account_name: false,
+    city: false,
+    state: false,
+  })
 
   useEffect(() => {
     setOpenPopup(true)
@@ -39,34 +48,45 @@ export default function HomeScreen() {
     setSegmentValue(value)
   }
 
+  const onSegmentSchemaStateChange = (event, value, index) => {
+    let schemaListNewTemp = JSON.parse(JSON.stringify(schemaList))
+    schemaListNewTemp[index] = value
+    setSchemaList(schemaListNewTemp)
+  }
+
   const addNewSchema = () => {
+    // validation
+    setSegmentValueError(false)
+    if (segmentValue === '') {
+      setSegmentValueError(true)
+      return true
+    }
+
     let schemaListTemp = schemaList
     schemaListTemp.push(segmentValue)
     setSchemaList(schemaListTemp)
+    let schemaOptionsFlagTemp = JSON.parse(JSON.stringify(schemaOptionsFlag))
+    schemaOptionsFlagTemp[segmentValue.value] = true
+    setSchemaOptionsFlag(schemaOptionsFlagTemp)
     setSegmentValue('')
-
-    // let schemaOptionsUnselectedTemp = schemaOptionsUnselected
-
-    // for (let index = 0; index < schemaOptionsUnselectedTemp.length; index++) {
-    //   if (schemaOptionsUnselectedTemp[index] === segmentValue) {
-    //     schemaOptionsUnselectedTemp.splice(index, 1);
-    //   }
-    // }
-    // setSchemaOptionsUnselected(schemaOptionsUnselectedTemp)
   }
 
-  const onSaveSegment = () => {
+  const onSaveSegment = async () => {
     let newSchemaList = []
     for (const element of schemaList) {
       let valueToSchemaList = {}
       valueToSchemaList[element.value] = element.label
       newSchemaList.push(valueToSchemaList)
     }
-    let dataToTransfer = {
+    let request = {
       segment_name: segmentName,
       schema: newSchemaList
     }
-    console.log('dataToTransfer', dataToTransfer)
+    console.log('request', request)
+
+    const saveSegmentResponse = await axios.post('https://webhook.site/b8f7cf84-87c4-4639-a2d7-1b16300f6c57', request)
+    console.log('saveSegmentResponse', saveSegmentResponse)
+
   }
 
   return (
@@ -100,9 +120,13 @@ export default function HomeScreen() {
                     spacing={2}
                     disablePortal
                     id="combo-box"
-                    options={schemaOptions}
+                    options={initialSchemaOptions}
+                    filterOptions={(options, params) => {
+                      let filtered = options.filter(record => !schemaOptionsFlag[record.value])
+                      return filtered;
+                    }}
                     renderInput={(params) => <TextField {...params} />}
-                    onChange={(event, value) => onSegmentSchemaChange(event, value)}
+                    onChange={(event, value) => onSegmentSchemaStateChange(event, value, index)}
                     value={element}
                     style={{
                       marginTop: '30px',
@@ -115,8 +139,16 @@ export default function HomeScreen() {
                 <Autocomplete
                   disablePortal
                   id="combo-box"
-                  options={schemaOptions}
-                  renderInput={(params) => <TextField {...params} label="Add schema to segment" />}
+                  options={initialSchemaOptions}
+                  filterOptions={(options, params) => {
+                    let filtered = options.filter(record => !schemaOptionsFlag[record.value])
+                    return filtered;
+                  }}
+                  renderInput={(params) => <TextField {...params} label="Add schema to segment"
+                    error={segmentValueError}
+                    id="standard-error-helper-text"
+                    helperText={segmentValueError && "Please select value"}
+                  />}
                   onChange={(event, value) => onSegmentSchemaChange(event, value)}
                   value={segmentValue}
                   style={{
@@ -125,7 +157,7 @@ export default function HomeScreen() {
                   }}
                 />
               </Grid>
-              <Link onClick={addNewSchema}>+Add new schema</Link>
+              <Link onClick={addNewSchema}>+ Add new schema</Link>
             </DialogContent>
 
             <DialogActions>
