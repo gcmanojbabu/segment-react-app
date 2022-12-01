@@ -1,8 +1,9 @@
-import { AppBar, Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Link, TextField, Typography } from '@mui/material'
+import { AppBar, Autocomplete, Button, Dialog, DialogActions, DialogContent, Grid, Link, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CircleIcon from '@mui/icons-material/Circle';
 import axios from 'axios';
-import { Box, Container } from '@mui/system';
+import { Box } from '@mui/system';
+import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 
 export default function HomeScreen() {
   const [openPopup, setOpenPopup] = useState(false);
@@ -29,10 +30,6 @@ export default function HomeScreen() {
     city: false,
     state: false,
   })
-
-  useEffect(() => {
-    setOpenPopup(true)
-  }, []);
 
   const handleClose = () => {
     setOpenPopup(false);
@@ -82,9 +79,6 @@ export default function HomeScreen() {
       return false
     }
 
-
-
-
     let newSchemaList = []
     for (const element of schemaList) {
       let valueToSchemaList = {}
@@ -106,7 +100,7 @@ export default function HomeScreen() {
     <>
       <Box>
         <AppBar position="static" style={{
-          backgroundColor: '#2596be',
+          backgroundColor: '#39AEBC',
           boxShadow: 'none',
           padding: '15px'
         }}>
@@ -117,7 +111,9 @@ export default function HomeScreen() {
 
         <div>
           <br />
-          <Button variant="contained" onClick={onSaveSegmentClick}>Save segment</Button>
+          <Button variant="contained" onClick={onSaveSegmentClick} style={{
+            backgroundColor: '#41B494'
+          }}>Save segment</Button>
 
           <Dialog
             open={openPopup}
@@ -131,14 +127,11 @@ export default function HomeScreen() {
                 direction="row"
                 justifyContent="flex-start"
                 alignItems="flex-start"
-              // style={{
-              //   marginTop: '30px',
-              // }}
               >
                 <Grid item xs={12}>
                   <Typography variant="h5" style={{
                     color: 'white',
-                    backgroundColor: '#2596be',
+                    backgroundColor: '#39AEBC',
                     boxShadow: 'none',
                     padding: '20px'
                   }}>
@@ -173,62 +166,119 @@ export default function HomeScreen() {
 
                     </Grid>
                   </Grid>
+
                   {schemaList?.map((element, index) => (
                     <React.Fragment key={index}>
-                      <Autocomplete
-                        spacing={2}
-                        disablePortal
-                        id="combo-box"
-                        options={initialSchemaOptions}
-                        filterOptions={(options, params) => {
-                          let filtered = options.filter(record => !schemaOptionsFlag[record.value])
-                          return filtered;
-                        }}
-                        renderInput={(params) => <TextField {...params} />}
-                        onChange={(event, value) => onSegmentSchemaStateChange(event, value, index)}
-                        value={element}
-                        style={{
-                          marginTop: '30px',
-                          marginBottom: '30px'
-                        }}
-                      />
+                      <Grid item xs={12}>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="felx-start"
+                          alignItems="center"
+                        >
+                          <Grid item xs={1}>
+                            <CircleIcon color="success" sx={{ height: '15px', width: '15px' }} />
+                          </Grid>
+                          <Grid item xs={9}>
+                            <Autocomplete
+                              spacing={2}
+                              disablePortal
+                              id="combo-box"
+                              options={initialSchemaOptions}
+                              filterOptions={(options, params) => {
+                                let filtered = options.filter(record => !schemaOptionsFlag[record.value])
+                                return filtered;
+                              }}
+                              renderInput={(params) => <TextField {...params} />}
+                              onChange={(event, value) => onSegmentSchemaStateChange(event, value, index)}
+                              value={element}
+                              style={{
+                                marginTop: '20px',
+                                marginBottom: '20px'
+                              }}
+                            />
+                          </Grid>
+                          <Grid item xs={1}>
+                            <RemoveRoundedIcon
+                              sx={{ height: '35px', width: '35px', ml: 3 }}
+                              style={{
+                                backgroundColor: '#ECEFF4',
+                                borderRadius: '7px',
+                              }}
+                            />
+                          </Grid>
+                        </Grid>
+                      </Grid>
                     </React.Fragment>
                   ))}
+
                   <Grid item xs={12}>
-                    {/* <CircleIcon color="success" sx={{ height: '15px', width: '15px' }} /> */}
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box"
-                      options={initialSchemaOptions}
-                      filterOptions={(options, params) => {
-                        let filtered = options.filter(record => !schemaOptionsFlag[record.value])
-                        return filtered;
-                      }}
-                      renderInput={(params) => <TextField {...params} label="Add schema to segment"
-                        error={segmentValueError}
-                        id="standard-error-helper-text"
-                        helperText={segmentValueError && "Please select value"}
-                      />}
-                      onChange={(event, value) => onSegmentSchemaChange(event, value)}
-                      value={segmentValue}
-                      style={{
-                        marginTop: '30px',
-                        marginBottom: '30px'
-                      }}
-                    />
+                    <Grid
+                      container
+                      direction="row"
+                      justifyContent="felx-start"
+                      alignItems="center"
+                    >
+                      <Grid item xs={1}>
+                        <CircleIcon color="success" sx={{ height: '15px', width: '15px' }} />
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Autocomplete
+                          disablePortal
+                          id="combo-box"
+                          options={initialSchemaOptions}
+                          filterOptions={(options, params) => {
+                            let filtered = options.filter(record => !schemaOptionsFlag[record.value])
+                            return filtered;
+                          }}
+                          renderInput={(params) => <TextField {...params} label="Add schema to segment"
+                            error={segmentValueError}
+                            id="standard-error-helper-text"
+                            helperText={segmentValueError && "Please select value"}
+                          />}
+                          onChange={(event, value) => onSegmentSchemaChange(event, value)}
+                          value={segmentValue}
+                          style={{
+                            marginTop: '20px',
+                            marginBottom: '20px'
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={1}>
+                        <RemoveRoundedIcon
+                          sx={{ height: '35px', width: '35px', ml: 3 }}
+                          style={{
+                            backgroundColor: '#ECEFF4',
+                            borderRadius: '7px',
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Link onClick={addNewSchema}>+ Add new schema</Link>
+
+                  <Grid item xs={12}>
+                    <Link onClick={addNewSchema}>+ Add new schema</Link>
+                  </Grid>
                 </DialogContent>
 
                 <DialogActions>
-                  <Button variant="contained" onClick={onSaveSegment}>Save the Segment</Button>
-                  <Button onClick={handleClose}>Cancel</Button>
+                  <Grid item xs={12}>
+                    <Button sx={{ m: 2 }} variant="contained" onClick={onSaveSegment} style={{
+                      backgroundColor: '#41B494',
+                    }}
+                    >Save the Segment</Button>
+                    <Button sx={{ m: 2 }} onClick={handleClose} style={{
+                      color: 'red',
+                      backgroundColor: '#ECEFF4'
+                    }}
+                    >Cancel</Button>
+                  </Grid>
                 </DialogActions>
               </Grid>
             </Box>
           </Dialog>
-        </div>
-      </Box>
+        </div >
+      </Box >
     </>
   )
 }
