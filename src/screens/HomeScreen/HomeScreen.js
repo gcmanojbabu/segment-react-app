@@ -1,111 +1,140 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Icon, Link, TextField } from '@mui/material'
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Icon, Link, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import CircleIcon from '@mui/icons-material/Circle';
+import { Stack, width } from '@mui/system';
 
 export default function HomeScreen() {
-  const [open, setOpen] = useState(false);
+  const [openPopup, setOpenPopup] = useState(false);
   const [segmentName, setSegmentName] = useState('')
-  const [segmentSchema, setSegmentSchema] = useState('')
+  const [segmentValue, setSegmentValue] = useState('')
   const [schemaList, setSchemaList] = useState([])
 
   const schemaOptions = [
-    { label: 'First Name', Value: 'first_name' },
-    { label: 'Last Name', Value: 'last_name' },
-    { label: 'Gender', Value: 'gender' },
-    { label: 'Age', Value: 'age' },
-    { label: 'Account Name', Value: 'account_name' },
-    { label: 'City', Value: 'city' },
-    { label: 'State', Value: 'state' },
+    { label: 'First Name', value: 'first_name', isSelected: false },
+    { label: 'Last Name', value: 'last_name', isSelected: false },
+    { label: 'Gender', value: 'gender', isSelected: false },
+    { label: 'Age', value: 'age', isSelected: false },
+    { label: 'Account Name', value: 'account_name', isSelected: false },
+    { label: 'City', value: 'city', isSelected: false },
+    { label: 'State', value: 'state', isSelected: true },
   ]
 
-
   useEffect(() => {
-    const fetchData = async () => {
-      setOpen(true)
-    }
-    fetchData();
+    setOpenPopup(true)
   }, []);
 
-
   const handleClose = () => {
-    setOpen(false);
+    setOpenPopup(false);
   };
 
   const onSaveSegmentClick = () => {
-    console.log('inside onSaveSegmentClick')
-    setOpen(true);
+    setOpenPopup(true);
   }
 
   const onSegmentNameChange = (e) => {
-    console.log('inside onSegmentNameChange')
     setSegmentName(e.target.value)
   }
 
   const onSegmentSchemaChange = (event, value) => {
-    console.log('inside onSegmentSchemaChange')
-    setSegmentSchema(value)
+    setSegmentValue(value)
   }
 
   const addNewSchema = () => {
-    console.log('inside addNewSchema')
     let schemaListTemp = schemaList
-    schemaListTemp.push(segmentSchema)
+    schemaListTemp.push(segmentValue)
     setSchemaList(schemaListTemp)
-    console.log('schemaListTemp', schemaListTemp)
+    setSegmentValue('')
+
+    // let schemaOptionsUnselectedTemp = schemaOptionsUnselected
+
+    // for (let index = 0; index < schemaOptionsUnselectedTemp.length; index++) {
+    //   if (schemaOptionsUnselectedTemp[index] === segmentValue) {
+    //     schemaOptionsUnselectedTemp.splice(index, 1);
+    //   }
+    // }
+    // setSchemaOptionsUnselected(schemaOptionsUnselectedTemp)
   }
 
-
+  const onSaveSegment = () => {
+    let newSchemaList = []
+    for (const element of schemaList) {
+      let valueToSchemaList = {}
+      valueToSchemaList[element.value] = element.label
+      newSchemaList.push(valueToSchemaList)
+    }
+    let dataToTransfer = {
+      segment_name: segmentName,
+      schema: newSchemaList
+    }
+    console.log('dataToTransfer', dataToTransfer)
+  }
 
   return (
     <>
-      <h1>
-        View Audience
-      </h1>
-      <div>
-        <Button variant="contained" onClick={onSaveSegmentClick}>Save segment</Button>
+      <Grid>
+        <h1>
+          View Audience
+        </h1>
+        <div>
+          <Button variant="contained" onClick={onSaveSegmentClick}>Save segment</Button>
 
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Saving segment"}
-          </DialogTitle>
-          <DialogContent>
+          <Dialog
+            open={openPopup}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Saving segment"}
+            </DialogTitle>
+            <DialogContent>
+              <p>Enter the Name of the Segment</p>
+              <TextField id="outlined-basic" label="Name of the Segment" fullWidth variant="outlined" onChange={onSegmentNameChange} />
+              <p>To save your segment, you need to add the schemas to build the query</p>
+              <CircleIcon color="success" /> - User Traits
+              <CircleIcon sx={{ color: 'red' }} /> - Group Traits
 
-            <p>Enter the Name of the Segment</p>
-            <TextField id="outlined-basic" label="Name of the Segment" fullWidth variant="outlined" onChange={onSegmentNameChange} />
-            <p>To save your segment, you need to add the schemas to build the query</p>
-            <CircleIcon color="success" /> - User Traits
-            <CircleIcon sx={{ color: 'red' }} /> - Group Traits
+              {schemaList?.map((element, index) => (
+                <React.Fragment key={index}>
+                  <Autocomplete
+                    spacing={2}
+                    disablePortal
+                    id="combo-box"
+                    options={schemaOptions}
+                    renderInput={(params) => <TextField {...params} />}
+                    onChange={(event, value) => onSegmentSchemaChange(event, value)}
+                    value={element}
+                    style={{
+                      marginTop: '30px',
+                      marginBottom: '30px'
+                    }}
+                  />
+                </React.Fragment>
+              ))}
+              <Grid item xs={12}>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box"
+                  options={schemaOptions}
+                  renderInput={(params) => <TextField {...params} label="Add schema to segment" />}
+                  onChange={(event, value) => onSegmentSchemaChange(event, value)}
+                  value={segmentValue}
+                  style={{
+                    marginTop: '30px',
+                    marginBottom: '30px'
+                  }}
+                />
+              </Grid>
+              <Link onClick={addNewSchema}>+Add new schema</Link>
+            </DialogContent>
 
-            {schemaList?.map((element, index) => (
-              <React.Fragment key={index}>
-                <h2>input - {element.label}</h2>
-              </React.Fragment>
-            ))}
-
-            <Autocomplete
-              disablePortal
-              id="combo-box"
-              options={schemaOptions}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Add schema to segment" />}
-              onChange={(event, value) => onSegmentSchemaChange(event, value)}
-              value={segmentSchema}
-            />
-            <Link onClick={addNewSchema}>+Add new schema</Link>
-
-
-          </DialogContent>
-          <DialogActions>
-            <Button variant="contained" onClick={handleClose}>Save the Segment</Button>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+            <DialogActions>
+              <Button variant="contained" onClick={onSaveSegment}>Save the Segment</Button>
+              <Button onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </Grid>
     </>
   )
 }
