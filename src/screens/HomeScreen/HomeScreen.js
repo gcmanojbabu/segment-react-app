@@ -73,10 +73,18 @@ export default function HomeScreen() {
 
   const onSaveSegment = async () => {
     // validation
+    let isValid = true
     setSegmentValueError(false)
-    if (schemaList.length === 0 || segmentName === '') {
+    setSegmentNameError(false)
+    if (schemaList.length === 0) {
+      isValid = false
       setSegmentValueError(true)
+    }
+    if (segmentName === '') {
+      isValid = false
       setSegmentNameError(true)
+    }
+    if (isValid === false) {
       return false
     }
 
