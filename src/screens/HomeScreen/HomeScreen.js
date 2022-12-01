@@ -1,4 +1,4 @@
-import { Autocomplete, Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, Link, TextField } from '@mui/material'
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Icon, Link, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import CircleIcon from '@mui/icons-material/Circle';
 
