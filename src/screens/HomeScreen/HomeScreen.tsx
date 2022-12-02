@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import './HomeScreen.css'
+import './HomeScreen.css';
 import { SchemaComponent } from '../../components/SchemaComponent/SchemaComponent';
 
-import { Alert, Box, Button, Dialog, Snackbar } from '@mui/material'
+import { Alert, Box, Button, Dialog, Snackbar } from '@mui/material';
 import { HeaderLayout } from '../../layout/HeaderLayout/HeaderLayout';
 
 export const HomeScreen = () => {
+  // state
   const [openPopup, setOpenPopup] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  const handleClose = (modalState) => {
+  const handleClose = (modalState: string) => {
     if (modalState === 'SUCCESS') {
       setOpenPopup(false);
-      handleSnackbarClick()
+      handleSnackbarClick();
     } else if (modalState === 'ERROR') {
       setOpenPopup(false);
     }
@@ -21,14 +22,14 @@ export const HomeScreen = () => {
 
   const onSaveSegmentClick = () => {
     setOpenPopup(true);
-  }
+  };
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
+    setSnackbarOpen(false);
   };
 
   const handleSnackbarClick = () => {
-    setSnackbarOpen(true)
+    setSnackbarOpen(true);
   };
 
   return (
@@ -37,14 +38,20 @@ export const HomeScreen = () => {
         <HeaderLayout />
 
         <div className='saveButtonContainer'>
-          <Button className={"saveButton"} variant="contained" onClick={onSaveSegmentClick}>Save segment</Button>
+          <Button
+            className={'saveButton'}
+            variant='contained'
+            onClick={onSaveSegmentClick}
+          >
+            Save segment
+          </Button>
         </div>
 
         <Dialog
           open={openPopup}
           onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
         >
           <SchemaComponent handleClose={handleClose} />
         </Dialog>
@@ -55,11 +62,11 @@ export const HomeScreen = () => {
           onClose={handleSnackbarClose}
           key={Math.random()}
         >
-          <Alert onClose={handleSnackbarClose} severity="success">
+          <Alert onClose={handleSnackbarClose} severity='success'>
             Segment saved successfully!
           </Alert>
         </Snackbar>
-      </Box >
+      </Box>
     </div>
-  )
-}
+  );
+};
